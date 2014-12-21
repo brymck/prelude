@@ -1,6 +1,6 @@
 ;;; prelude-c.el --- Emacs Prelude: cc-mode configuration.
 ;;
-;; Copyright © 2011-2013 Bozhidar Batsov
+;; Copyright © 2011-2014 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/prelude
@@ -46,7 +46,8 @@
                                 (run-hooks 'prelude-c-mode-common-hook)))
 
 (defun prelude-makefile-mode-defaults ()
-  (setq indent-tabs-mode t))
+  (whitespace-toggle-options '(tabs))
+  (setq indent-tabs-mode t ))
 
 (setq prelude-makefile-mode-hook 'prelude-makefile-mode-defaults)
 

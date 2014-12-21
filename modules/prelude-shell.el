@@ -1,4 +1,4 @@
-;;; prelude-js.el --- Emacs Prelude: js-mode configuration.
+;;; prelude-shell.el --- Emacs Prelude: sh-mode configuration.
 ;;
 ;; Copyright © 2011-2014 Bozhidar Batsov
 ;;
@@ -11,7 +11,7 @@
 
 ;;; Commentary:
 
-;; Some basic configuration for js-mode.
+;; Some basic configuration for cc-mode and the modes derived from it.
 
 ;;; License:
 
@@ -32,27 +32,20 @@
 
 ;;; Code:
 
-(require 'prelude-programming)
-(prelude-require-packages '(js2-mode json-mode))
+(require 'sh-script)
 
-(require 'js2-mode)
+;; recognize pretzo files as zsh scripts
+(defvar prelude-pretzo-files '("zlogin" "zlogin" "zlogout" "zpretzorc" "zprofile" "zshenv" "zshrc"))
 
-(add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.pac\\'"   . js2-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+(mapc (lambda (file)
+        (add-to-list 'auto-mode-alist `(,(format "\\%s\\'" file) . sh-mode)))
+      prelude-pretzo-files)
 
-(eval-after-load 'js2-mode
-  '(progn
-     (defun prelude-js-mode-defaults ()
-       ;; electric-layout-mode doesn't play nice with smartparens
-       (setq-local electric-layout-rules '((?\; . after)))
-       (setq mode-name "JS2")
-       (js2-imenu-extras-mode +1))
+(add-hook 'sh-mode-hook
+          (lambda ()
+            (if (and buffer-file-name
+                     (member (file-name-nondirectory buffer-file-name) prelude-pretzo-files))
+                (sh-set-shell "zsh"))))
 
-     (setq prelude-js-mode-hook 'prelude-js-mode-defaults)
-
-     (add-hook 'js2-mode-hook (lambda () (run-hooks 'prelude-js-mode-hook)))))
-
-(provide 'prelude-js)
-
-;;; prelude-js.el ends here
+(provide 'prelude-shell)
+;;; prelude-shell.el ends here

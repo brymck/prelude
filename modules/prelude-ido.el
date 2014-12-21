@@ -1,4 +1,4 @@
-;;; prelude-js.el --- Emacs Prelude: js-mode configuration.
+;;; prelude-ido.el --- Ido setup
 ;;
 ;; Copyright © 2011-2014 Bozhidar Batsov
 ;;
@@ -11,7 +11,7 @@
 
 ;;; Commentary:
 
-;; Some basic configuration for js-mode.
+;; Ido-related config.
 
 ;;; License:
 
@@ -31,28 +31,34 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
+(prelude-require-packages '(flx-ido ido-ubiquitous smex))
 
-(require 'prelude-programming)
-(prelude-require-packages '(js2-mode json-mode))
+(require 'ido)
+(require 'ido-ubiquitous)
+(require 'flx-ido)
 
-(require 'js2-mode)
+(setq ido-enable-prefix nil
+      ido-enable-flex-matching t
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point 'guess
+      ido-max-prospects 10
+      ido-save-directory-list-file (expand-file-name "ido.hist" prelude-savefile-dir)
+      ido-default-file-method 'selected-window
+      ido-auto-merge-work-directories-length -1)
+(ido-mode +1)
+(ido-ubiquitous-mode +1)
 
-(add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.pac\\'"   . js2-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+;;; smarter fuzzy matching for ido
+(flx-ido-mode +1)
+;; disable ido faces to see flx highlights
+(setq ido-use-faces nil)
 
-(eval-after-load 'js2-mode
-  '(progn
-     (defun prelude-js-mode-defaults ()
-       ;; electric-layout-mode doesn't play nice with smartparens
-       (setq-local electric-layout-rules '((?\; . after)))
-       (setq mode-name "JS2")
-       (js2-imenu-extras-mode +1))
+;;; smex, remember recently and most frequently used commands
+(require 'smex)
+(setq smex-save-file (expand-file-name ".smex-items" prelude-savefile-dir))
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
 
-     (setq prelude-js-mode-hook 'prelude-js-mode-defaults)
-
-     (add-hook 'js2-mode-hook (lambda () (run-hooks 'prelude-js-mode-hook)))))
-
-(provide 'prelude-js)
-
-;;; prelude-js.el ends here
+(provide 'prelude-ido)
+;;; prelude-ido.el ends here

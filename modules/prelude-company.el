@@ -1,4 +1,4 @@
-;;; prelude-js.el --- Emacs Prelude: js-mode configuration.
+;;; prelude-company.el --- company-mode setup
 ;;
 ;; Copyright © 2011-2014 Bozhidar Batsov
 ;;
@@ -11,7 +11,7 @@
 
 ;;; Commentary:
 
-;; Some basic configuration for js-mode.
+;; company-mode config.
 
 ;;; License:
 
@@ -31,28 +31,18 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
+(prelude-require-packages '(company))
 
-(require 'prelude-programming)
-(prelude-require-packages '(js2-mode json-mode))
+(require 'company)
 
-(require 'js2-mode)
+(setq company-idle-delay 0.5)
+(setq company-tooltip-limit 10)
+(setq company-minimum-prefix-length 2)
+;; invert the navigation direction if the the completion popup-isearch-match
+;; is displayed on top (happens near the bottom of windows)
+(setq company-tooltip-flip-when-above t)
 
-(add-to-list 'auto-mode-alist '("\\.js\\'"    . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.pac\\'"   . js2-mode))
-(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+(global-company-mode 1)
 
-(eval-after-load 'js2-mode
-  '(progn
-     (defun prelude-js-mode-defaults ()
-       ;; electric-layout-mode doesn't play nice with smartparens
-       (setq-local electric-layout-rules '((?\; . after)))
-       (setq mode-name "JS2")
-       (js2-imenu-extras-mode +1))
-
-     (setq prelude-js-mode-hook 'prelude-js-mode-defaults)
-
-     (add-hook 'js2-mode-hook (lambda () (run-hooks 'prelude-js-mode-hook)))))
-
-(provide 'prelude-js)
-
-;;; prelude-js.el ends here
+(provide 'prelude-company)
+;;; prelude-company.el ends here
